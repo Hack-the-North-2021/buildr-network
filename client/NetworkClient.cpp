@@ -6,8 +6,8 @@
 
 #define MAX_PACKET 1024
 
-NetworkClient::NetworkClient(std::string ip_address, int port)
-    : ip_address(ip_address), port(port)
+NetworkClient::NetworkClient(std::string ip_address, int port, std::map<int,NetworkCallback> network_callbacks)
+    : ip_address(ip_address), port(port), network_callbacks(network_callbacks)
 {
 
 }
@@ -35,7 +35,7 @@ NetworkClient::OpenConnection()
     std::thread worker(&NetworkClient::HandleConnection, this);
 
     nlohmann::json data = {
-        {"cmd", "position"},
+        {"cmd", 1},
         {"position", {
             {"x", 1},
             {"y", 2}
@@ -59,14 +59,32 @@ NetworkClient::HandleConnection()
             continue;
 
         Logger::Debug(std::string(recv_msg));
+        DispatchCmd(recv_msg);
+    }
+}
+
+void
+NetworkClient::DispatchCmd(const std::string& json_string)
+{
+    try {
+        nlohmann::json data = nlohmann::json::parse(json_string);
+        int cmd = data["cmd"];
+
+        for (const auto &[nc_cmd, nc_callback] : network_callbacks) {
+            if (cmd != nc_cmd) continue;
+            
+            nc_callback(cmd);
+        }
+
+    } catch (nlohmann::json::parse_error& e) {
+        Logger::Warning("Malformed json string");
     }
 }
 
 void
 NetworkClient::SendRawMessage(const nlohmann::json& data)
 {
-    /* std::string serialized = data.dump(); */
-    std::string serialized = "poo";
+    std::string serialized = data.dump();
     const char* send_data = serialized.c_str();
     int data_len = strlen(send_data);
 

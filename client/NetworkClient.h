@@ -9,11 +9,14 @@
 
 #include <string>
 #include <thread>
+#include <map>
 
 #include "lib/json.hpp"
 
 typedef struct sockaddr Sockaddr;
 typedef struct sockaddr_in SockaddrIn;
+
+typedef void (*NetworkCallback)(const nlohmann::json& json_cmd);
 
 class NetworkClient
 {
@@ -22,12 +25,14 @@ private:
     SockaddrIn address;
     std::string ip_address;
     int port;
+    std::map<int,NetworkCallback> network_callbacks;
 public:
-    NetworkClient(std::string ip_address, int port);
+    NetworkClient(std::string ip_address, int port, std::map<int,NetworkCallback> network_callbacks);
     ~NetworkClient();
     void OpenConnection();
 private:
     void HandleConnection();
+    void DispatchCmd(const std::string& json_string);
     void SendRawMessage(const nlohmann::json& data);
 };
 

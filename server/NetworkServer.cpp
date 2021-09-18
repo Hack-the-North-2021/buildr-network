@@ -6,8 +6,8 @@
 #define MAX_PACKET 1024
 #define BACKLOG_SIZE 10
 
-NetworkServer::NetworkServer(int port)
-    : server_fd(0), port(port)
+NetworkServer::NetworkServer(int port, std::map<int,NetworkCallback> network_callbacks)
+    : server_fd(0), port(port), network_callbacks(network_callbacks)
 {
 
 }
@@ -68,23 +68,39 @@ NetworkServer::HandleConnection(int client_sock)
             continue;
 
         Logger::Debug(std::string(recv_msg));
-        ParseCmd(recv_msg);
+        DispatchCmd(recv_msg);
     }
 }
 
 void
-NetworkServer::ParseCmd(const std::string& json_string)
+NetworkServer::DispatchCmd(const std::string& json_string)
 {
     try {
         nlohmann::json data = nlohmann::json::parse(json_string);
+        int cmd = data["cmd"];
+
+        for (const auto &[nc_cmd, nc_callback] : network_callbacks) {
+            if (cmd != nc_cmd) continue;
+            
+            nc_callback(cmd);
+        }
+
     } catch (nlohmann::json::parse_error& e) {
-        Logger::Warning("Failed to parse json string");
+        Logger::Warning("Malformed json string");
     }
 }
 
 void
-NetworkServer::DispatchCmd(const nlohmann::json& json_cmd)
+NetworkServer::SendRawMessage(int client_sock, const nlohmann::json& data)
 {
+    std::string serialized = data.dump();
+    const char* send_data = serialized.c_str();
+    int data_len = strlen(send_data);
 
+    if (data_len > MAX_PACKET)
+        Logger::Warning("Attempting to send a packet exceeding max size");
+
+    send(client_sock, send_data, data_len, 0);
+    Logger::Debug("Sent message");
 }
 
