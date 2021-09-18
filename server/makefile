@@ -2,7 +2,7 @@ CXX=g++
 CXXFLAGS=-std=c++14 -Wall -MMD
 LIBS=-lpthread
 EXEC=server
-SRC=main NetworkServer
+SRC=main NetworkServer Logger
 OBJ=$(addsuffix .o,${SRC})
 DEP=$(addsuffix .d,${SRC})
 

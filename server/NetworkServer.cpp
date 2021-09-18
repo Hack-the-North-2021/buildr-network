@@ -1,6 +1,5 @@
-#include <thread>
-
 #include "NetworkServer.h"
+#include "Logger.h"
 
 #define MAX_PACKET 1024
 #define BACKLOG_SIZE 10
@@ -20,19 +19,21 @@ void
 NetworkServer::OpenConnection()
 {
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        error_die("Cannot create the socket");
+        Logger::ErrorDie("Cannot create the socket");
 
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(port);
        
     if (bind(server_fd, (Sockaddr*)&address, sizeof(address)) < 0)
-        error_die("Cannot bind");
+        Logger::ErrorDie("Cannot bind");
 
     if (listen(server_fd, BACKLOG_SIZE) < 0)
-        error_die("Error listening");
+        Logger::ErrorDie("Error listening");
 
-    std::thread worker(&NetworkServer::Listen);
+    std::thread worker(&NetworkServer::Listen, this);
+
+    worker.join();
 }
 
 void
@@ -42,11 +43,11 @@ NetworkServer::Listen()
     int addrlen = sizeof(address);
 
     while (true) {
-        printf("Listening to connections on port %d\n", PORT);
+        printf("Listening to connections on port %d\n", port);
         if ((client_sock = accept(server_fd, (Sockaddr*)&address, (socklen_t*)&addrlen)) < 0)
-            error_die("Error accepting connection");
+            Logger::ErrorDie("Error accepting connection");
 
-        std::thread worker(&NetworkServer::HandleConnection, client_sock)
+        std::thread worker(&NetworkServer::HandleConnection, this, client_sock);
     }
 }
 

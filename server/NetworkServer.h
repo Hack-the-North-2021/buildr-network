@@ -1,3 +1,10 @@
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <stdlib.h>
+#include <netinet/in.h>
+
+#include <thread>
 
 typedef struct sockaddr Sockaddr;
 typedef struct sockaddr_in SockaddrIn;
