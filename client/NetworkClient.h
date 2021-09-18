@@ -10,6 +10,8 @@
 #include <string>
 #include <thread>
 
+#include "lib/json.hpp"
+
 typedef struct sockaddr Sockaddr;
 typedef struct sockaddr_in SockaddrIn;
 
@@ -24,9 +26,9 @@ public:
     NetworkClient(std::string ip_address, int port);
     ~NetworkClient();
     void OpenConnection();
-    void SendRawMessage();
 private:
     void HandleConnection();
+    void SendRawMessage(const nlohmann::json& data);
 };
 
 #endif // __NETWORKCLIENT_H__

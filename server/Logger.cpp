@@ -15,13 +15,17 @@ Logger::ErrorDie(const std::string& message)
 void
 Logger::Network(const std::string& message)
 {
+    #ifdef DEBUG_MODE
     printf("[NETWORK] %s\n", message.c_str());
+    #endif
 }
 
 void
 Logger::Warning(const std::string& message)
 {
+    #ifdef DEBUG_MODE
     printf("[WARN] %s\n", message.c_str());
+    #endif
 }
 
 void

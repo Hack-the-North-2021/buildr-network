@@ -9,6 +9,8 @@
 
 #include <thread>
 
+#include "lib/json.hpp"
+
 typedef struct sockaddr Sockaddr;
 typedef struct sockaddr_in SockaddrIn;
 
@@ -25,6 +27,8 @@ public:
  private:
     void Listen();
     void HandleConnection(int client_sock);
+    void ParseCmd(const std::string& json_string);
+    void DispatchCmd(const nlohmann::json& json_cmd);
 };
 
 #endif // __NETWORKSERVER_H__

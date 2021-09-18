@@ -68,6 +68,23 @@ NetworkServer::HandleConnection(int client_sock)
             continue;
 
         Logger::Debug(std::string(recv_msg));
+        ParseCmd(recv_msg);
     }
+}
+
+void
+NetworkServer::ParseCmd(const std::string& json_string)
+{
+    try {
+        nlohmann::json data = nlohmann::json::parse(json_string);
+    } catch (nlohmann::json::parse_error& e) {
+        Logger::Warning("Failed to parse json string");
+    }
+}
+
+void
+NetworkServer::DispatchCmd(const nlohmann::json& json_cmd)
+{
+
 }
 

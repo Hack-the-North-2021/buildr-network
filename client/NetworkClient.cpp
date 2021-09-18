@@ -34,6 +34,15 @@ NetworkClient::OpenConnection()
 
     std::thread worker(&NetworkClient::HandleConnection, this);
 
+    nlohmann::json data = {
+        {"cmd", "position"},
+        {"position", {
+            {"x", 1},
+            {"y", 2}
+        }}
+    };
+    SendRawMessage(data);
+
     worker.join();
 }
 
@@ -54,11 +63,11 @@ NetworkClient::HandleConnection()
 }
 
 void
-NetworkClient::SendRawMessage()
+NetworkClient::SendRawMessage(const nlohmann::json& data)
 {
-    /* take in json object */
-    std::string message = "lmao";
-    const char* send_data = message.c_str();
+    /* std::string serialized = data.dump(); */
+    std::string serialized = "poo";
+    const char* send_data = serialized.c_str();
     int data_len = strlen(send_data);
 
     if (data_len > MAX_PACKET)
