@@ -9,7 +9,6 @@
 
 #include <string>
 #include <thread>
-#include <cstdio>
 
 typedef struct sockaddr Sockaddr;
 typedef struct sockaddr_in SockaddrIn;
@@ -25,8 +24,9 @@ public:
     NetworkClient(std::string ip_address, int port);
     ~NetworkClient();
     void OpenConnection();
+    void SendRawMessage();
 private:
-    void Listen();
+    void HandleConnection();
 };
 
 #endif // __NETWORKCLIENT_H__

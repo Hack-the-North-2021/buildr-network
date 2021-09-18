@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include "NetworkServer.h"
 #include "Logger.h"
 
@@ -43,7 +45,7 @@ NetworkServer::Listen()
     int addrlen = sizeof(address);
 
     while (true) {
-        printf("Listening to connections on port %d\n", port);
+        Logger::Debug("Listening to connections");
         if ((client_sock = accept(server_fd, (Sockaddr*)&address, (socklen_t*)&addrlen)) < 0)
             Logger::ErrorDie("Error accepting connection");
 
@@ -56,9 +58,16 @@ NetworkServer::Listen()
 void
 NetworkServer::HandleConnection(int client_sock)
 {
+    char recv_msg[MAX_PACKET];
+    int read_size;
+
     Logger::Network("Connection established with client");
     while (true) {
+        memset(recv_msg, 0, MAX_PACKET);
+        if ((read_size = read(client_sock, recv_msg, MAX_PACKET)) <= 0)
+            continue;
 
+        Logger::Debug(std::string(recv_msg));
     }
 }
 
