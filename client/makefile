@@ -1,16 +1,17 @@
 CXX=g++
-CXXFLAGS=-std=c++14 -Wall -MMD
+CXXFLAGS=-std=c++17 -Wall -MMD
+LIBS=-lpthread
 EXEC=client
-SRC=client
+SRC=main NetworkClient Logger
 OBJ=$(addsuffix .o,${SRC})
 DEP=$(addsuffix .d,${SRC})
 
 .PHONY: clean
 
 ${EXEC}: ${OBJ}
-	${CXX} ${OBJ} -o ${EXEC}
+	${CXX} ${OBJ} -o ${EXEC} ${LIBS}
 
 -include ${DEP}
 
 clean:
-	rm ${EXEC} ${OBJ} ${DEP}
+	-rm ${EXEC} ${OBJ} ${DEP}

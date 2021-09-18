@@ -48,12 +48,17 @@ NetworkServer::Listen()
             Logger::ErrorDie("Error accepting connection");
 
         std::thread worker(&NetworkServer::HandleConnection, this, client_sock);
+
+        worker.join();
     }
 }
 
 void
 NetworkServer::HandleConnection(int client_sock)
 {
+    Logger::Network("Connection established with client");
+    while (true) {
 
+    }
 }
 

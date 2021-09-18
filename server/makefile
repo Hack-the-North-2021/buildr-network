@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-std=c++14 -Wall -MMD
+CXXFLAGS=-std=c++17 -Wall -MMD
 LIBS=-lpthread
 EXEC=server
 SRC=main NetworkServer Logger

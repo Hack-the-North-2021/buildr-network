@@ -1,3 +1,6 @@
+#ifndef __NETWORKSERVER_H__
+#define __NETWORKSERVER_H__
+
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/socket.h>
@@ -23,3 +26,5 @@ public:
     void Listen();
     void HandleConnection(int client_sock);
 };
+
+#endif // __NETWORKSERVER_H__
