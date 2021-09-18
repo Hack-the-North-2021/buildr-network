@@ -31,7 +31,7 @@ int main(int argc, char const *argv[])
     address.sin_family = AF_INET;
     address.sin_port = htons(PORT);
 
-    if(inet_pton(AF_INET, "127.0.0.1", &address.sin_addr) <= 0) 
+    if (inet_pton(AF_INET, "127.0.0.1", &address.sin_addr) <= 0) 
         error_die("Invalid IP Address");
    
     if (connect(client_fd, (Sockaddr*)&address, sizeof(address)) < 0)
@@ -41,6 +41,7 @@ int main(int argc, char const *argv[])
     char recv_data[MAX_PACKET];
 
     snprintf(send_data, MAX_PACKET, "hello server");
+    memset(recv_data, 0, MAX_PACKET);
 
     send(client_fd, send_data, strlen(send_data), 0);
     read(client_fd, recv_data, MAX_PACKET);
